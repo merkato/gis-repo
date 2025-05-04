@@ -1,0 +1,263 @@
+tags:
+  load_all: true
+  exclude:
+  - created_by
+  - source
+tables:
+#Miejsca, Adresy i Podział Administracyjny
+  admin:
+    type: polygon
+    mapping:
+      boundary: [administrative, national_park, protected_area]
+      leisure: [nature_reserve]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: teryt, key: "teryt:terc", type: string}
+     - {name: admin_level, key: admin_level, type: integer}
+     - {name: type, type: mapping_value}
+  adresy:
+    type: geometry
+    type_mappings:
+      points:
+       "addr:housenumber": [__any__]
+      polygons:
+       "addr:housenumber": [__any__]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: ulica, key: "addr:street", type: string}
+     - {name: miasto, key: "addr:city", type: string}
+     - {name: nr_domu, type: mapping_value}
+  places:
+    type: point
+    mapping:
+      place: [__any__]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: population, key: population, type: integer}
+     - {name: type, type: mapping_value}
+#Sieć komunikacyjna
+  roads:
+    type: linestring
+    mappings:
+      railway:
+       mapping:
+        railway: [__any__]
+      highway:
+       mapping:
+        highway: [__any__]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: oneway, key: oneway, type: bool}
+     - {name: tunnel, key: tunnel, type: bool}
+     - {name: bridge, key: bridge, type: bool}
+     - {name: ref, key: ref, type: string}
+     - {name: access, key: access, type: string}
+     - {name: service, key: service, type: string}
+     - {name: grade, key: grade, type: string}	 
+     - {name: usage, key: usage, type: string}
+     - {name: construction, key: construction, type: string}
+     - {name: type, type: mapping_value}
+     - {name: z_order, type: wayzorder}
+     - {name: class, type: mapping_key}
+  transport:
+    type: geometry
+    type_mappings:
+      points:
+            railway: [station, halt, crossing, level_crossing, tram_stop, milestone]
+            highway: [milestone, motorway_junction, turning_circle, bus_stop]
+            marker: [post]
+      linestrings:
+       railway: [platform]
+       aeroway: [runway, taxiway]
+      polygons:
+       public_transport: [platform, station]
+       railway: [station, switch_box]
+       aeroway: [aerodrome, taxiway, runway, terminal, apron, helipad]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: ref, key: ref, type: string}
+     - {name: distance, key: distance, type: string}
+     - {name: position, key: "railway:position", type: string}
+     - {name: rodzaj, key:  utility, type: string}
+     - {name: type, type: mapping_value}
+     - {name: class, type: mapping_key}
+#Zagospodarowanie i pokrycie terenu
+  amenities:
+    type: point
+    mappings:
+      turystyczne:
+        mapping:
+           amenity: [__any__]
+           historic: [__any__]
+           tourism: [__any__]
+      naturalne:
+        mapping:
+           natural: [peak, saddle]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: ele, key: ele, type: string}
+     - {name: type, type: mapping_value}
+     - {name: class, type: mapping_key}
+     - {name: bunker_type, type: string}
+  budynki:
+    type: polygon
+    mapping:
+      building: [__any__]
+    columns:
+      - {name: osm_id, type: id}
+      - {name: geometry, type: geometry}
+      - {name: name, key: name, type: string}
+      - {name: type, type: mapping_value}
+  zbiorniki:
+    type: polygon
+    mapping:
+      waterway: [riverbank]
+      landuse: [basin, resevoir]
+      water: [__any__]
+      natural: [water, bay]
+      leisure: [swimming_pool]
+    columns:
+      - {name: osm_id, type: id}
+      - {name: geometry, type: geometry}
+      - {name: name, key: name, type: string}
+      - {name: type, type: mapping_value}
+  cieki:
+    type: linestring
+    mapping:
+      waterway: [__any__]
+      barrier: [ditch]
+    columns:
+      - {name: osm_id, type: id}
+      - {name: geometry, type: geometry}
+      - {name: name, key: name, type: string}
+      - {name: tunnel, key: tunnel, type: bool}
+      - {name: type, type: mapping_value}
+  landusages:
+    type: polygon
+    mapping:
+      amenity: [university, school, college, library, fuel, parking, cinema, theatre, place_of_worship, hospital]
+      landuse: [__any__]
+      waterway: [riverbank]
+      water: [__any__]
+      leisure: [__any__]
+      tourism: [zoo]
+      natural: [wood, wetland, heath, land, scrub, water]
+      barrier: [hedge]
+      man_made: [pier, wastewater_plant, water_works, watermill, waterwell]
+      highway: [pedestrian, footway]
+      military: [barracks]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: ref, key: ref, type: string}
+     - args:
+        values:
+         - wetland
+         - wood
+       type: enumerate
+       name: z_order
+     - {name: type, type: mapping_value}
+  power:
+    type: geometry
+    type_mappings:
+      points:
+        power: [substation, power_station]
+      linestrings:
+        power : [line, minor_line]
+        man_made: [pipeline]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: ref, key: ref, type: string}
+     - {name: voltage, key: voltage, type: string}
+     - {name: typ, key: substance, type: string}
+     - {name: class, type: mapping_key}
+     - {name: type, type: mapping_value}
+  barrierways:
+   type: geometry
+   type_mappings:
+    points:
+      barrier: [__any__]
+    linestrings:
+      natural: [tree_row, cliff]
+      barrier: [__any__]
+      man_made: [embankment]
+      embankment: [__any__]
+      cutting: [__any__]
+   columns:
+    - {name: osm_id, type: id}
+    - {name: geometry, type: geometry}
+    - {name: type, type: mapping_value}
+    - {name: name, key: name, type: string}
+#Bezpieczeństwo publiczne
+  emergency:
+    type: geometry
+    type_mappings:
+     points:
+      emergency: [fire_hydrant, suction_point, landing_site]
+      amenity: [hospital, fire_station, police]
+     polygons:
+      amenity: [hospital, fire_station, police]
+      emergency: [suction_point]
+    columns:
+     - {name: osm_id, type: id}
+     - {name: geometry, type: geometry}
+     - {name: name, key: name, type: string}
+     - {name: ksrg, key: ksrg, type: boolint}
+     - {name: ref, key: ref, type: string}
+     - {name: fire_hydrant_type, key: "fire_hydrant:type", type: string}
+     - {name: fire_hydrant_diameter, key: "fire_hydrant:diameter", type: string}
+     - {name: type, type: mapping_value}
+#Trasy - tabela elementów
+  ppoz:
+    type: relation_member
+    columns:
+     - {name: osm_id, type: id}
+     - {name: member, type: member_id}
+     - {name: geometry, type: geometry}
+     - {name: relname, type: string, key: name}
+     - {name: ref, type: string, key: ref}
+    mapping:
+      route: [emergency_access]
+  turystyka:
+    type: relation_member
+    columns:
+     - {name: osm_id, type: id}
+     - {name: member, type: member_id}
+     - {name: geometry, type: geometry}
+     - {name: symbol, type: string, key: "osmc:symbol"}
+     - {name: kolor, type: string, key: colour}
+     - {name: ref, type: string, key: ref}
+     - {name: typ, key: route, type: string}
+    mapping:
+      route: [foot, hiking, bicycle, historic]
+#Trasy - tabela metadanych i elementów
+  relacje:
+    type: relation
+    columns:
+     - name: osm_id
+       type: id
+     - key: ref
+       name: ref
+       type: string
+     - name: network
+       key: network
+       type: string
+     - name: type
+       key: route
+       type: string
+    mapping:
+      route: [__any__]
